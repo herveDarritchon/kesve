@@ -13,6 +13,12 @@ repositories {
 
 dependencies {
     implementation(kotlin("stdlib-jdk8"))
+
+    testCompile("io.kotlintest:kotlintest-runner-junit5:3.3.2")
+}
+
+tasks.test {
+    useJUnitPlatform()
 }
 
 tasks.withType<KotlinCompile> {
