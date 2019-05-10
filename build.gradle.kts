@@ -15,6 +15,7 @@ dependencies {
     implementation(kotlin("stdlib-jdk8"))
 
     testCompile("io.kotlintest:kotlintest-runner-junit5:3.3.2")
+    testCompile("org.slf4j:slf4j-simple:1.7.26")
 }
 
 tasks.test {
