@@ -5,18 +5,39 @@ import java.net.URL
 
 class ObjectMapper internal constructor(
     private val source: String,
+    private val header: Boolean,
     private val sep: Char = ','
 ) {
     fun toList(): List<String> {
         if (source.isBlank()) return emptyList()
+        if (header) return source.cleanHeader().split(sep).toList()
         return source.split(sep).toList()
     }
+
+    fun <T> toObject(): T {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
 }
 
-class ObjectMapperBuilderFinal internal constructor(private val source: String) {
+internal fun String.cleanHeader(): String {
+    val indexOf = this.indexOf("\n")
+    return this.substring(indexOf + 1)
+}
+
+class ObjectMapperBuilderFinal internal constructor(
+    private val source: String,
+    private val header: Boolean = false
+) {
+
     fun build(): ObjectMapper {
-        return ObjectMapper(source)
+        return ObjectMapper(source, header = header)
     }
+
+    fun withHeader(): ObjectMapperBuilderFinal {
+        return ObjectMapperBuilderFinal(this.source, true)
+    }
+
 }
 
 class ObjectMapperBuilder {

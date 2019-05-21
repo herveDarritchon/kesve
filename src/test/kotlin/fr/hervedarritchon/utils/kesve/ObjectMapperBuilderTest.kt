@@ -1,5 +1,6 @@
 package fr.hervedarritchon.utils.kesve
 
+import fr.hervedarritchon.utils.kesve.models.Elt
 import fr.hervedarritchon.utils.kesve.models.exceptions.NoSourceSetException
 import io.kotlintest.matchers.types.shouldBeTypeOf
 import io.kotlintest.shouldBe
@@ -36,15 +37,27 @@ class ObjectMapperBuilderTest : ShouldSpec({
                 .build()
                 .toList() shouldBe emptyList()
         }
-        should("return list of (elt1,elt2) if the string is elt1,elt2") {
+        should("return list of (elt1,elt2) if the content is elt1,elt2") {
             ObjectMapperBuilder
                 .from("elt1,elt2")
                 .build()
-                .toList() shouldBe listOf("elt1","elt2")
+                .toList() shouldBe listOf("elt1", "elt2")
         }
-
+        should("return list of (elt1,elt2) if the content is header1,header2\nelt1,elt2") {
+            ObjectMapperBuilder
+                .from("header1,header2\nelt1,elt2")
+                .withHeader()
+                .build()
+                .toList() shouldBe listOf("elt1", "elt2")
+        }
     }
 
-}) {
-
-}
+    "mapper.toObject<T>() from a String" {
+        should("return an instance of Elt if the content is elt1,elt2") {
+            ObjectMapperBuilder
+                .from("elt1,elt2")
+                .build()
+                .toObject<Elt>() shouldBe Elt("elt1", "elt2")
+        }
+    }
+})
