@@ -1,10 +1,11 @@
 package fr.hervedarritchon.utils.kesve
 
 import fr.hervedarritchon.utils.kesve.models.exceptions.NoSourceSetException
+import fr.hervedarritchon.utils.kesve.reflection.makeInstance
 import java.net.URL
 
 class ObjectMapper internal constructor(
-    private val source: String,
+    val source: String,
     private val header: Boolean,
     private val sep: Char = ','
 ) {
@@ -14,8 +15,9 @@ class ObjectMapper internal constructor(
         return source.split(sep).toList()
     }
 
-    fun <T> toObject(): T {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    inline fun <reified T> toObject(): T {
+        val list = source.split(",").toList()
+        return makeInstance(parameters = list)
     }
 
 }
