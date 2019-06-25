@@ -6,59 +6,70 @@ import kotlin.reflect.KClass
  * Created by Hervé Darritchon on 2019-05-12.
  *
  */
-
-class A
-
-class B(val a: A)
-
-class C(val a: A, val b: B)
-
 class NoUsableConstructor : Error()
 
 inline fun <reified T> makeInstance(parameters: List<String> = listOf()): T {
     return makeInstance(T::class, parameters) as T
 }
 
-fun makeInstance(clazz: KClass<*>, parameters: List<String> = listOf()): Any? {
+fun makeInstance(clazz: KClass<*>, listOfParameters: List<String> = listOf()): Any? {
 
+    val parameters = if (listOfParameters.isNotEmpty()) {
+        listOfParameters.map {
+            it.castStringTo()
+        }
+    } else listOf()
 
-    if (parameters.isNotEmpty()) {
-        val elt = parameters[0]
-        return when {
-            elt.checkBoolean() -> elt.toBoolean()
-            elt.checkInt() -> elt.toInt()
-            elt.checkFloat() -> elt.toFloat()
-            else -> elt
+    val primitive = makePrimitiveOrNull(clazz, parameters.firstOrNull())
+    if (primitive != null) {
+        return primitive
+    }
+
+    val constructors = clazz.constructors
+        .sortedBy { it.parameters.size }
+
+    for (constructor in constructors) {
+        try {
+            val arguments = constructor.parameters
+                .map { it.type.classifier as KClass<*> }
+                .mapIndexed { index, kClass ->
+                    makeInstance(
+                        kClass,
+                        listOf(listOfParameters[index])
+                    )
+                }
+                .toTypedArray()
+
+            return constructor.call(*arguments)
+        } catch (e: Throwable) {
+            // no-op. We catch any possible error here that might occur during class creation
         }
     }
 
-    val constructor = clazz.constructors
-        .minBy { it.parameters.size } ?: throw NoUsableConstructor()
-
-    val arguments = constructor.parameters
-        .map {
-            it.type.classifier as KClass<*>
-        }
-        .map {
-            makeRandomInstance(it)
-        }
-        .toTypedArray()
-
-    return constructor.call(*arguments)
+    throw NoUsableConstructor()
 }
 
-fun <T> isType(objectToCast: Any?, implementationInterface: Class<T>): Boolean {
-    if (objectToCast == null) {
-        return false
-    }
-
-    return try {
-        implementationInterface.cast(objectToCast)
-        true
-    } catch (e: ClassCastException) {
-        false
+private fun String.castStringTo(): Any {
+    return when {
+        checkBoolean() -> toBoolean()
+        checkInt() -> toInt()
+        checkFloat() -> toFloat()
+        this.length == 1 -> single()
+        else -> this
     }
 }
+
+private fun makePrimitiveOrNull(clazz: KClass<*>, first: Any?): Any? =
+    when (clazz) {
+        Int::class -> first as Int
+        Long::class -> first as Long
+        Double::class -> first as Double
+        Float::class -> first as Float
+        Char::class -> first as Char
+        Boolean::class -> first as Boolean
+        String::class -> first as String
+        else -> null
+    }
 
 private fun String.checkBoolean(): Boolean {
     val regex = Regex(pattern = "^(?i)(true|false)\$")
