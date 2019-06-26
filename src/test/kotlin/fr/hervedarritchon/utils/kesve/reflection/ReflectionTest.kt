@@ -1,5 +1,7 @@
 package fr.hervedarritchon.utils.kesve.reflection
 
+import fr.hervedarritchon.utils.kesve.reflection.models.A
+import fr.hervedarritchon.utils.kesve.reflection.models.ComposedFloatString
 import io.kotlintest.matchers.string.shouldContain
 import io.kotlintest.matchers.types.shouldBeTypeOf
 import io.kotlintest.shouldBe
@@ -9,12 +11,6 @@ import io.kotlintest.specs.ShouldSpec
  * Created by Hervé Darritchon on 2019-05-22.
  *
  */
-
-class A
-
-class B(val a: A)
-
-class C(val a: A, val b: B)
 
 class ReflectionTest : ShouldSpec({
 
@@ -69,5 +65,3 @@ class ReflectionTest : ShouldSpec({
 
     }
 })
-
-data class ComposedFloatString(val f: Float, val s: String)

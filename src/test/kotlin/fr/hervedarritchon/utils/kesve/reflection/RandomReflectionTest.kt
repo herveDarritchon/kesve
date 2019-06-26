@@ -1,5 +1,8 @@
 package fr.hervedarritchon.utils.kesve.reflection
 
+import fr.hervedarritchon.utils.kesve.reflection.models.A
+import fr.hervedarritchon.utils.kesve.reflection.models.B
+import fr.hervedarritchon.utils.kesve.reflection.models.C
 import io.kotlintest.matchers.string.shouldContain
 import io.kotlintest.matchers.types.shouldBeTypeOf
 import io.kotlintest.specs.ShouldSpec
