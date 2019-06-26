@@ -7,7 +7,7 @@ import io.kotlintest.shouldBe
 import io.kotlintest.shouldThrow
 import io.kotlintest.specs.ShouldSpec
 
-class ObjectMapperBuilderTest : ShouldSpec({
+class ObjectMapperTest : ShouldSpec({
     "ObjectMapperBuilder from String" {
         should("create a mapper to marshall and unmarshall some CSV data") {
             ObjectMapperBuilder
@@ -23,6 +23,15 @@ class ObjectMapperBuilderTest : ShouldSpec({
                     .build()
             }
         }
+        should("create an Elt object if the file contains some elts separated by ','") {
+            shouldThrow<NoSourceSetException> {
+                ObjectMapperBuilder
+                    .from(this.javaClass.getResource("test-file-empty.csv"))
+                    .build()
+                    .toObject<Elt>() shouldBe Elt("elt1", "elt2")
+            }
+        }
+
     }
     "mapper.toList() from a string" {
         should("return an Empty list if the string is empty") {
