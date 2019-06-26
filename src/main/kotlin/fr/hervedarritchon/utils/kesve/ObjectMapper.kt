@@ -7,7 +7,7 @@ import java.net.URL
 class ObjectMapper internal constructor(
     val source: String,
     private val header: Boolean,
-    private val sep: Char = ','
+    val sep: Char = ','
 ) {
     fun toList(): List<String> {
         if (source.isBlank()) return emptyList()
@@ -16,7 +16,7 @@ class ObjectMapper internal constructor(
     }
 
     inline fun <reified T> toObject(): T {
-        val list = source.split(",").toList()
+        val list = source.split(sep).toList()
         return makeInstance(parameters = list)
     }
 
@@ -29,15 +29,20 @@ internal fun String.cleanHeader(): String {
 
 class ObjectMapperBuilderFinal internal constructor(
     private val source: String,
-    private val header: Boolean = false
+    private val header: Boolean = false,
+    private val separator: Char = ','
 ) {
 
     fun build(): ObjectMapper {
-        return ObjectMapper(source, header = header)
+        return ObjectMapper(source = source, header = header, sep = separator)
     }
 
     fun withHeader(): ObjectMapperBuilderFinal {
-        return ObjectMapperBuilderFinal(this.source, true)
+        return ObjectMapperBuilderFinal(source = source, header = true)
+    }
+
+    fun withSeparator(sep: Char): ObjectMapperBuilderFinal {
+        return ObjectMapperBuilderFinal(source = source, separator = sep)
     }
 
 }

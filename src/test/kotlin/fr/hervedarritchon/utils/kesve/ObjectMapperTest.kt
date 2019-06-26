@@ -69,4 +69,14 @@ class ObjectMapperTest : ShouldSpec({
                 .toObject<Elt>() shouldBe Elt("elt1", "elt2")
         }
     }
+    "mapper.toObject<T>() from a String with separator ';'" {
+        should("return an instance of Elt if the content is 'elt1;elt2'") {
+            ObjectMapperBuilder
+                .from("elt1;elt2")
+                .withSeparator(';')
+                .build()
+                .toObject<Elt>() shouldBe Elt("elt1", "elt2")
+        }
+    }
+
 })
