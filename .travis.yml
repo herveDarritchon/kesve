@@ -5,6 +5,6 @@ jdk:
   - oraclejdk8
 
 script:
-  - ll .
+  - ls .
   - chmod +x ./gradlew
   - ./gradlew build --scan -s
