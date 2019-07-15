@@ -5,6 +5,7 @@ plugins {
     jacoco
     `java-library`
     `maven-publish`
+    id("com.gradle.build-scan") version "2.3"
 }
 
 group = "fr.hervedarritchon.utils"
@@ -111,4 +112,11 @@ tasks.javadoc {
     if (JavaVersion.current().isJava9Compatible) {
         (options as StandardJavadocDocletOptions).addBooleanOption("html5", true)
     }
+}
+
+buildScan {
+    termsOfServiceUrl = "https://gradle.com/terms-of-service"
+    termsOfServiceAgree = "yes"
+
+    publishAlways()
 }
