@@ -6,13 +6,22 @@ plugins {
     `java-library`
     `maven-publish`
     id("com.gradle.build-scan") version "2.3"
+    id("com.jfrog.bintray") version "1.8.4"
+    id("com.jfrog.artifactory") version "4.9.7"
 }
 
-group = "fr.hervedarritchon.utils"
-version = "1.0-SNAPSHOT"
+val snapshotEnvValue = System.getenv("snapshot")?.toBoolean()
+
+val snapshotExtension: String = when {
+    snapshotEnvValue ?: true -> "-SNAPSHOT"
+    else -> ""
+}
+group = "fr.hervedarritchon.utils.kesve"
+version = "0.0.1$snapshotExtension"
 
 repositories {
     mavenCentral()
+    jcenter()
 }
 
 dependencies {
@@ -56,7 +65,7 @@ tasks.jacocoTestReport {
 
 publishing {
     publications {
-        create<MavenPublication>("mavenJava") {
+        create<MavenPublication>("mavenPublication") {
             artifactId = "kesve-library"
             from(components["kotlin"])
             artifact(tasks["sourcesJar"])
@@ -73,10 +82,12 @@ publishing {
                 name.set("Kesve Library")
                 description.set("A library to handle CSV file developed in Kotlin")
                 url.set("https://github.com/herveDarritchon/kesve")
-                properties.set(mapOf(
-                    "myProp" to "value",
-                    "prop.with.dots" to "anotherValue"
-                ))
+                properties.set(
+                    mapOf(
+                        "myProp" to "value",
+                        "prop.with.dots" to "anotherValue"
+                    )
+                )
                 licenses {
                     license {
                         name.set("The Apache License, Version 2.0")
@@ -119,4 +130,26 @@ buildScan {
     termsOfServiceAgree = "yes"
 
     publishAlways()
+}
+
+//bintray {
+//    user = "bintray_user"
+//    key = "bintray_api_key"
+//    with(pkg) {
+//        repo = "kotlin"
+//        name = "kesve"
+//        setLicenses("Apache-2.0")
+//        vcsUrl = "https://github.com/herveDarritchon/kesve"
+//        with(version) {
+//            name = "0.0.1-Final"
+//            desc = "Kesve Library 0.0.1 final"
+//            released = LocalDate().toString()
+//            vcsTag = "0.0.1"
+//            attributes = mapOf("gradle-plugin" to "com.use.less:com.use.less.gradle:gradle-useless-plugin")
+//        }
+//    }
+//}
+
+apply {
+    from("publish.gradle")
 }
